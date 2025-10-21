@@ -1,14 +1,17 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/auth/login/login';
-import { Home } from './pages/home/home';
 import { authGuard } from './services/auth-guard';
-import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
 import { Register } from './components/auth/register/register';
 import { ManageCourses } from './components/admin/manage-courses/manage-courses';
 import { ManageUsers } from './components/admin/manage-users/manage-users';
 import { Profile } from './components/admin/profile/profile';
-import { Layout } from './components/admin/layout/layout';
 import { RegisterInstructor } from './components/auth/register-instructor/register-instructor';
+import { AdminDashboard } from './components/admin/dashboard/dashboard';
+import { AdminLayout } from './components/admin/layout/layout';
+import { HomeComponent } from './components/home/home';
+import { InstructorLayout } from './components/instructor/instructor';
+import { DashboardLayout } from './components/dashboard-layout/dashboard-layout';
+import { Unauthorized } from './components/unauthorized/unauthorized';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,12 +19,17 @@ export const routes: Routes = [
   { path: 'register-instructor', component: RegisterInstructor },
   {
     path: 'home',
-    component: Home,
-    canActivate: [authGuard], // Apply the guard here
+    component: HomeComponent,
+    // canActivate: [authGuard], // Apply the guard here
+  },
+  {
+    path: 'instructor',
+    component: InstructorLayout,
+    canActivate: [authGuard], // Apply the same guard
   },
   {
     path: 'admin',
-    component: Layout,
+    component: AdminLayout,
     canActivate: [authGuard], // Apply the same guard
     data: {
       expectedRole: 'Admin', // ✨ Add the required role here
@@ -34,8 +42,23 @@ export const routes: Routes = [
       { path: 'profile', component: Profile }
     ]
   },
+  {
+  path: 'instructor',
+  component: InstructorLayout,
+  canActivate: [authGuard],
+  data: { expectedRole: 'Instructor' },
+  children: [
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    // { path: 'dashboard', component: InstructorDashboard },
+    // { path: 'courses', component: ManageCourses },
+    // { path: 'students', component: ManageUsers },
+    // { path: 'profile', component: Profile }
+  ]
+  },
+
   // Redirect to home by default if logged in, otherwise guard will redirect to login
   { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'unauthorized', component: Unauthorized },
   // Wildcard route for 404
   { path: '**', redirectTo: '/unauthorized' },
 ];
