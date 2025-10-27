@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http'; 
 import { CourseService } from '../../../services/instructor-course-service'; 
+import { Router } from '@angular/router';
 
 // Define the structure for a course object (component's expected data format)
 export interface Course {
@@ -10,7 +11,7 @@ export interface Course {
   instructor: string;
   lessons: number;
   totalTime: string;
-  status: 'Published' | 'Upcoming' | 'Push';
+  status: 'Published' | 'Upcoming' | 'Unlisted';
   category: string;
 }
 
@@ -30,7 +31,7 @@ export class InstructorCoursesComponent implements OnInit {
   courseList: Course[] = []; 
   isLoading: boolean = true; 
 
-  constructor(private courseService: CourseService) { }
+  constructor(private courseService: CourseService, private router: Router) { }
 
   ngOnInit(): void {
     this.fetchCourses();
@@ -58,7 +59,7 @@ export class InstructorCoursesComponent implements OnInit {
         return 'status-published';
       case 'Upcoming':
         return 'status-upcoming';
-      case 'Push':
+      case 'Unlisted':
       default:
         return 'status-push';
     }
@@ -68,7 +69,15 @@ export class InstructorCoursesComponent implements OnInit {
     return course.name; 
   }
   
-  viewCourse(course: Course): void { /* ... */ }
-  editCourse(course: Course): void { /* ... */ }
-  deleteCourse(course: Course): void { /* ... */ }
+  viewCourse(course: Course): void { 
+    this.router.navigate(['/instructor/course', course.name]);
+   }
+  editCourse(course: Course): void { 
+  }
+  deleteCourse(course: Course): void {
+  }
+  createCourse(): void {
+    this.router.navigate(['/instructor/createcourse']);
+  }
+
 }
